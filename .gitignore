@@ -60,3 +60,6 @@ target/
 
 # Editor backups
 *~
+
+# eric project
+*.e4p
