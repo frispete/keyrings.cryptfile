@@ -31,6 +31,7 @@ setup_params = dict(
     namespace_packages = name.split('.')[:-1],
     install_requires = [
         'argon2_cffi',
+        'keyring',
         'pycryptodome',
     ],
     extras_require = {
