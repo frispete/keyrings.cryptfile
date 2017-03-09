@@ -19,7 +19,7 @@ class ArgonOCBEncryption(object):
     """
     AES OCB with Argon2 based KDF Encryption support
     """
-    scheme = 'Cryptodome [Argon2] AES OCB'
+    scheme = 'PyCryptodome [Argon2] AES OCB'
     version = __version__
     file_version = None
 
