@@ -2,7 +2,8 @@ from __future__ import with_statement
 
 import os
 import json
-import base64
+
+from . import file_base
 
 from keyring.util import properties
 from .file import EncryptedKeyring
@@ -82,14 +83,14 @@ class CryptFileKeyring(ArgonOCBEncryption, EncryptedKeyring):
         # Serialize salt, encrypted password, mac and nonce in a portable format
         data = dict(salt=salt, data=data, mac=mac, nonce=cipher.nonce)
         for key in data:
-            data[key] = base64.encodestring(data[key]).decode()
+            data[key] = file_base.encodebytes(data[key]).decode()
         return json.dumps(data).encode()
 
     def decrypt(self, password_encrypted):
         # unpack the encrypted payload
         data = json.loads(password_encrypted.decode())
         for key in data:
-            data[key] = base64.decodestring(data[key].encode())
+            data[key] = file_base.decodebytes(data[key].encode())
         cipher = self._create_cipher(self.keyring_key, data['salt'], data['nonce'])
         plaintext = cipher.decrypt_and_verify(data['data'], data['mac'])
         assert plaintext.startswith(self.pw_prefix)

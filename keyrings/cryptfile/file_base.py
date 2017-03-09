@@ -11,6 +11,16 @@ from keyring.backend import KeyringBackend
 from keyring.util import platform_, properties
 from keyring.util.escape import escape as escape_for_ini
 
+try:
+    encodebytes = base64.encodebytes
+except AttributeError:
+    encodebytes = base64.encodestring
+
+try:
+    decodebytes = base64.decodebytes
+except AttributeError:
+    decodebytes = base64.decodestring
+
 
 class FileBacked(object):
     @abc.abstractproperty
@@ -93,7 +103,7 @@ class Keyring(FileBacked, KeyringBackend):
         try:
             password_base64 = config.get(service, username).encode()
             # decode with base64
-            password_encrypted = base64.decodestring(password_base64)
+            password_encrypted = decodebytes(password_base64)
             # decrypt the password
             password = self.decrypt(password_encrypted).decode('utf-8')
         except (configparser.NoOptionError, configparser.NoSectionError):
@@ -106,7 +116,7 @@ class Keyring(FileBacked, KeyringBackend):
         # encrypt the password
         password_encrypted = self.encrypt(password.encode('utf-8'))
         # encode with base64
-        password_base64 = base64.encodestring(password_encrypted).decode()
+        password_base64 = encodebytes(password_encrypted).decode()
 
         self._write_config_value(service, username, password_base64)
 

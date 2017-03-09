@@ -2,7 +2,6 @@ from __future__ import with_statement
 
 import os
 import getpass
-import base64
 import sys
 import json
 
@@ -183,14 +182,14 @@ class EncryptedKeyring(Encrypted, file_base.Keyring):
             salt=salt, IV=IV, password_encrypted=password_encrypted,
         )
         for key in data:
-            data[key] = base64.encodestring(data[key]).decode()
+            data[key] = file_base.encodebytes(data[key]).decode()
         return json.dumps(data).encode()
 
     def decrypt(self, password_encrypted):
         # unpack the encrypted payload
         data = json.loads(password_encrypted.decode())
         for key in data:
-            data[key] = base64.decodestring(data[key].encode())
+            data[key] = file_base.decodebytes(data[key].encode())
         cipher = self._create_cipher(self.keyring_key, data['salt'],
             data['IV'])
         plaintext = cipher.decrypt(data['password_encrypted'])
