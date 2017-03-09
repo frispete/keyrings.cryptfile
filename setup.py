@@ -8,6 +8,7 @@ import setuptools
 with io.open('README.rst', encoding='utf-8') as readme:
     long_description = readme.read()
 
+
 name = 'keyrings.cryptfile'
 description = 'Encrypted file keyring backend'
 
@@ -21,7 +22,7 @@ setup_params = dict(
     long_description = long_description,
     url = 'https://github.com/frispete/' + name,
     license = 'MIT',
-    packages = setuptools.find_packages(),
+    packages = setuptools.find_packages(exclude=['tests']),
     include_package_data = True,
     namespace_packages = name.split('.')[:-1],
     install_requires = [
