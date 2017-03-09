@@ -53,7 +53,7 @@ class CryptFileKeyring(ArgonOCBEncryption, EncryptedKeyring):
     Encrypted File Keyring Backend, based on AES OCB with Argon2 KDF
     """
     # specify keyring file
-    filename = 'cryptfile.cfg'
+    filename = 'cryptfile_pass.cfg'
     pw_prefix = 'pw:'.encode()
 
     @properties.ClassProperty
