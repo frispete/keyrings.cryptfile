@@ -30,6 +30,8 @@ setup_params = dict(
     include_package_data = True,
     namespace_packages = name.split('.')[:-1],
     install_requires = [
+        'argon2_cffi',
+        'pycryptodome',
     ],
     extras_require = {
     },
