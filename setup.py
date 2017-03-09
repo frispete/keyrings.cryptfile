@@ -5,8 +5,6 @@ import io
 import sys
 import setuptools
 
-from keyrings.cryptfile.cryptfile import __version__ as version
-
 with io.open('README.rst', encoding='utf-8') as readme:
     long_description = readme.read()
 
@@ -19,7 +17,7 @@ description = 'Encrypted file keyring backend'
 setup_params = dict(
     name = name,
     #use_scm_version = True,
-    version = version,
+    version = '1.0',
     author = 'Hans-Peter Jansen',
     author_email = 'hpj@urpla.net',
     description = description or name,
