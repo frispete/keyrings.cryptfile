@@ -7,7 +7,7 @@ import unittest
 from keyring.tests.test_backend import BackendBasicTests
 from keyring.tests.util import random_string
 
-from keyrings.alt import file
+from keyrings.cryptfile import file
 
 class FileKeyringTests(BackendBasicTests):
 
