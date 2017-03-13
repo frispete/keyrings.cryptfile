@@ -46,6 +46,9 @@ setup_params = dict(
         'keyring.backends': [
             'cryptfile = keyrings.cryptfile.cryptfile',
         ],
+        'console_scripts': [
+            'cryptfile-convert = keyrings.cryptfile.convert:main',
+        ],
     },
 )
 
