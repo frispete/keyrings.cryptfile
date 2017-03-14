@@ -129,18 +129,42 @@ class EncryptedKeyring(Encrypted, file_base.Keyring):
             )
         except (configparser.NoSectionError, configparser.NoOptionError):
             return False
-        # accept missing scheme
+        scheme_valid = self._check_scheme(config)
+        if scheme_valid is None:
+            # accept a missing scheme
+            return True
+        elif scheme_valid is False:
+            return False
+        return self._check_version(config)
+
+    def _check_scheme(self, config):
+        """
+        check for a valid scheme
+        accept a missing scheme for backwards compatibility
+
+        return None, if scheme is missing
+        return True, if scheme is valid
+        raise ValueError otherwise
+        """
         try:
             scheme = config.get(
                 escape_for_ini('keyring-setting'),
                 escape_for_ini('scheme'),
             )
         except (configparser.NoSectionError, configparser.NoOptionError):
-            return True
+            return
         if scheme != self.scheme:
             raise ValueError("Encryption scheme mismatch "
                              "(exp.: %s, found: %s)" % (self.scheme, scheme))
-        # if scheme exists, a version must exist, too
+        return True
+
+    def _check_version(self, config):
+        """
+        check for a valid version
+        an existing scheme implies an existing version as well
+
+        return True, if version is valid, and False otherwise
+        """
         try:
             self.file_version = config.get(
                     escape_for_ini('keyring-setting'),
