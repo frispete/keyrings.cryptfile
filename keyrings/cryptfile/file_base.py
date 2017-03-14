@@ -1,8 +1,8 @@
 from __future__ import with_statement
 
 import os
-import base64
 import abc
+import base64
 
 from keyring.py27compat import configparser
 
@@ -97,7 +97,7 @@ class Keyring(FileBacked, KeyringBackend):
         """
         service = escape_for_ini(service)
         username = escape_for_ini(username)
-        assoc = (service + username).encode()
+        assoc = (service + '\0' + username).encode()
 
         # load the passwords from the file
         config = configparser.RawConfigParser()
@@ -122,11 +122,12 @@ class Keyring(FileBacked, KeyringBackend):
     def set_password(self, service, username, password):
         """Write the password in the file.
         """
-        assoc = (escape_for_ini(service) + escape_for_ini(username)).encode()
+        assoc = (escape_for_ini(service) + '\0' +
+                 escape_for_ini(username)).encode()
         # encrypt the password
         password_encrypted = self.encrypt(password.encode('utf-8'), assoc)
-        # encode with base64
-        password_base64 = encodebytes(password_encrypted).decode()
+        # encode with base64 and add line break to untangle config file
+        password_base64 = '\n' + encodebytes(password_encrypted).decode()
 
         self._write_config_value(service, username, password_base64)
 
