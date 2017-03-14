@@ -1,19 +1,20 @@
 from __future__ import with_statement
 
 import os
-import getpass
 import sys
 import json
+import getpass
 
 from keyring.py27compat import configparser
 
 from keyring.util import properties
 from keyring.util.escape import escape as escape_for_ini
 
-from . import file_base
+from keyrings.cryptfile.file_base import (
+        Keyring, decodebytes, encodebytes,
+)
 
-
-class PlaintextKeyring(file_base.Keyring):
+class PlaintextKeyring(Keyring):
     """Simple File Keyring with no encryption"""
 
     priority = .5
@@ -66,7 +67,7 @@ class Encrypted(object):
             return password
 
 
-class EncryptedKeyring(Encrypted, file_base.Keyring):
+class EncryptedKeyring(Encrypted, Keyring):
     """PyCrypto File Keyring"""
 
     filename = 'crypted_pass.cfg'
@@ -207,14 +208,15 @@ class EncryptedKeyring(Encrypted, file_base.Keyring):
             salt=salt, IV=IV, password_encrypted=password_encrypted,
         )
         for key in data:
-            data[key] = file_base.encodebytes(data[key]).decode()
+            # spare a few bytes: throw away newline from base64 encoding
+            data[key] = encodebytes(data[key]).decode()[:-1]
         return json.dumps(data).encode()
 
     def decrypt(self, password_encrypted, assoc = None):
         # unpack the encrypted payload, ignore associated data
         data = json.loads(password_encrypted.decode())
         for key in data:
-            data[key] = file_base.decodebytes(data[key].encode())
+            data[key] = decodebytes(data[key].encode())
         cipher = self._create_cipher(self.keyring_key, data['salt'],
             data['IV'])
         plaintext = cipher.decrypt(data['password_encrypted'])
