@@ -106,9 +106,11 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
                 "required.")
         return 2.5
 
-    def encrypt(self, password):
+    def encrypt(self, password, assoc = None):
         salt = os.urandom(16)
         cipher = self._create_cipher(self.keyring_key, salt)
+        if assoc is not None:
+            cipher.update(assoc)
         data, mac = cipher.encrypt_and_digest(self.pw_prefix + password)
         # Serialize salt, encrypted password, mac and nonce in a portable format
         data = dict(salt=salt, data=data, mac=mac, nonce=cipher.nonce)
@@ -116,12 +118,14 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
             data[key] = encodebytes(data[key]).decode()
         return json.dumps(data).encode()
 
-    def decrypt(self, password_encrypted):
+    def decrypt(self, password_encrypted, assoc = None):
         # unpack the encrypted payload
         data = json.loads(password_encrypted.decode())
         for key in data:
             data[key] = decodebytes(data[key].encode())
         cipher = self._create_cipher(self.keyring_key, data['salt'], data['nonce'])
+        if assoc is not None:
+            cipher.update(assoc)
         plaintext = cipher.decrypt_and_verify(data['data'], data['mac'])
         assert plaintext.startswith(self.pw_prefix)
         return plaintext[len(self.pw_prefix):]
