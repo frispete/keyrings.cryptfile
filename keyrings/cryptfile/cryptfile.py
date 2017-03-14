@@ -111,7 +111,7 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         cipher = self._create_cipher(self.keyring_key, salt)
         if assoc is not None:
             cipher.update(assoc)
-        data, mac = cipher.encrypt_and_digest(self.pw_prefix + password)
+        data, mac = cipher.encrypt_and_digest(password)
         # Serialize salt, encrypted password, mac and nonce in a portable format
         data = dict(salt=salt, data=data, mac=mac, nonce=cipher.nonce)
         for key in data:
@@ -127,9 +127,8 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         cipher = self._create_cipher(self.keyring_key, data['salt'], data['nonce'])
         if assoc is not None:
             cipher.update(assoc)
-        plaintext = cipher.decrypt_and_verify(data['data'], data['mac'])
-        assert plaintext.startswith(self.pw_prefix)
-        return plaintext[len(self.pw_prefix):]
+        # throws ValueError in case of failures
+        return cipher.decrypt_and_verify(data['data'], data['mac'])
 
     def _check_scheme(self, config):
         """
