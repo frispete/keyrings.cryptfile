@@ -115,7 +115,8 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         # Serialize salt, encrypted password, mac and nonce in a portable format
         data = dict(salt=salt, data=data, mac=mac, nonce=cipher.nonce)
         for key in data:
-            data[key] = encodebytes(data[key]).decode()
+            # spare a few bytes: throw away newline from base64 encoding
+            data[key] = encodebytes(data[key]).decode()[:-1]
         return json.dumps(data).encode()
 
     def decrypt(self, password_encrypted, assoc = None):
