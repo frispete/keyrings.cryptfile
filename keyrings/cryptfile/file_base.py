@@ -75,16 +75,20 @@ class Keyring(FileBacked, KeyringBackend):
     """
 
     @abc.abstractmethod
-    def encrypt(self, password):
+    def encrypt(self, password, assoc = None):
         """
         Given a password (byte string), return an encrypted byte string.
+
+        assoc might provide associated data (typically: service and username)
         """
 
     @abc.abstractmethod
-    def decrypt(self, password_encrypted):
+    def decrypt(self, password_encrypted, assoc = None):
         """
         Given a password encrypted by a previous call to `encrypt`, return
         the original byte string.
+
+        assoc might provide associated data (typically: service and username)
         """
 
     def get_password(self, service, username):
@@ -93,6 +97,7 @@ class Keyring(FileBacked, KeyringBackend):
         """
         service = escape_for_ini(service)
         username = escape_for_ini(username)
+        assoc = (service + username).encode()
 
         # load the passwords from the file
         config = configparser.RawConfigParser()
@@ -104,8 +109,12 @@ class Keyring(FileBacked, KeyringBackend):
             password_base64 = config.get(service, username).encode()
             # decode with base64
             password_encrypted = decodebytes(password_base64)
-            # decrypt the password
-            password = self.decrypt(password_encrypted).decode('utf-8')
+            # decrypt the password with associated data
+            try:
+                password = self.decrypt(password_encrypted, assoc).decode('utf-8')
+            except ValueError:
+                # decrypt the password without associated data
+                password = self.decrypt(password_encrypted).decode('utf-8')
         except (configparser.NoOptionError, configparser.NoSectionError):
             password = None
         return password
@@ -113,8 +122,9 @@ class Keyring(FileBacked, KeyringBackend):
     def set_password(self, service, username, password):
         """Write the password in the file.
         """
+        assoc = (escape_for_ini(service) + escape_for_ini(username)).encode()
         # encrypt the password
-        password_encrypted = self.encrypt(password.encode('utf-8'))
+        password_encrypted = self.encrypt(password.encode('utf-8'), assoc)
         # encode with base64
         password_base64 = encodebytes(password_encrypted).decode()
 
