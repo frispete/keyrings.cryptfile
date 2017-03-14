@@ -194,7 +194,8 @@ class EncryptedKeyring(Encrypted, file_base.Keyring):
         """
         del self.keyring_key
 
-    def encrypt(self, password):
+    def encrypt(self, password, assoc = None):
+        # encrypt password, ignore associated data
         from Crypto.Random import get_random_bytes
         salt = get_random_bytes(self.block_size)
         from Crypto.Cipher import AES
@@ -209,8 +210,8 @@ class EncryptedKeyring(Encrypted, file_base.Keyring):
             data[key] = file_base.encodebytes(data[key]).decode()
         return json.dumps(data).encode()
 
-    def decrypt(self, password_encrypted):
-        # unpack the encrypted payload
+    def decrypt(self, password_encrypted, assoc = None):
+        # unpack the encrypted payload, ignore associated data
         data = json.loads(password_encrypted.decode())
         for key in data:
             data[key] = file_base.decodebytes(data[key].encode())
