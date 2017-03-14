@@ -34,7 +34,7 @@ class ArgonAESEncryption(object):
 
     @properties.NonDataProperty
     def scheme(self):
-        return 'PyCryptodome [Argon2] AES128.' + self.aesmode
+        return '[Argon2] AES128.' + self.aesmode
 
     def _create_cipher(self, password, salt, nonce = None):
         """
@@ -126,45 +126,46 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         assert plaintext.startswith(self.pw_prefix)
         return plaintext[len(self.pw_prefix):]
 
-    def _check_file(self):
+    def _check_scheme(self, config):
         """
-        Check if the file exists and has the expected password reference.
+        check for a valid scheme
+
+        return True, if scheme is valid
+        raise ValueError otherwise
         """
-        if not os.path.exists(self.file_path):
-            return False
-        config = configparser.RawConfigParser()
-        config.read(self.file_path)
-
-        # password reference exist
-        try:
-            config.get(
-                escape_for_ini('keyring-setting'),
-                escape_for_ini('password reference'),
-            )
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            return False
-
-        # read scheme
         try:
             scheme = config.get(
                 escape_for_ini('keyring-setting'),
                 escape_for_ini('scheme'),
             )
         except (configparser.NoSectionError, configparser.NoOptionError):
-            return False
+            raise ValueError("Encryption scheme missing")
 
         # extract AES mode
         aesmode = scheme[-3:]
         if aesmode not in self._get_mode():
-            return False
+            raise ValueError("Encryption scheme invalid: %s" % (aesmode))
 
         # setup AES mode
         self.aesmode = aesmode
 
+        # remove pointless crypto module name
+        if scheme.startswith('PyCryptodome '):
+            scheme = scheme[13:]
+
+        # check other scheme properties
         if scheme != self.scheme:
             raise ValueError("Encryption scheme mismatch "
                              "(exp.: %s, found: %s)" % (self.scheme, scheme))
-        # if scheme exists, a version must exist, too
+        return True
+
+    def _check_version(self, config):
+        """
+        check for a valid version
+        an existing scheme implies an existing version as well
+
+        return True, if version is valid, and False otherwise
+        """
         try:
             self.file_version = config.get(
                     escape_for_ini('keyring-setting'),
