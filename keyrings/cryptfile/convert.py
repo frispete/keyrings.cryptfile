@@ -74,10 +74,15 @@ class CommandLineTool(object):
         if not outfile:
             outfile = infile + '.%d' % os.getpid()
 
+        if os.path.samefile(infile, outfile):
+            self.parser.exit(3, 'infile and outfile must not the same file\n')
+
         if os.path.exists(outfile):
             if args.force:
-                os.remove(outfile)
-                log.info('%s removed', outfile)
+                #os.remove(outfile)
+                #log.info('%s removed', outfile)
+                os.rename(outfile, outfile + '~')
+                log.info('%s renamed to %s~', outfile, outfile)
             else:
                 self.parser.exit(3, '%s exists already\n' % outfile)
 
@@ -101,16 +106,16 @@ class CommandLineTool(object):
         config.read(infile)
 
         for section in config.sections():
-            log.debug('process section: %s', section)
+            log.debug('process section: [%s]', section)
             if section != escape('keyring-setting'):
                 for username in config.options(section):
                     username = unescape(username)
                     section = unescape(section)
-                    log.info('process: %s.%s', section, username)
+                    log.info('process: [%s] %s', section, username)
                     password = inkr.get_password(section, username)
                     if password:
                         outkr.set_password(section, username, password)
-                        log.debug('%s.%s: %s', section, username,  password)
+                        log.debug('[%s] %s: %s', section, username,  password)
                     else:
                         log.error('invalid entry: [%s]%s', section, username)
 
