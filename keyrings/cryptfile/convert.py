@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Simple tool to convert cryptfile keyring encryption modes"""
 
 from __future__ import print_function
@@ -16,23 +15,29 @@ from keyring.util.escape import escape, unescape
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
 
 NOTE = """\
-Note: no effort has been made to replace the original file.
-Please check the new file, and move it over manually.
-"""
+Note: no effort has been made to replace the original keyring file.
+Please check the new keyring file, and rename it manually.
+
+If outfile exists already, it is preserved as outfile~.
+
+Default infile:
+%s
+""" % CryptFileKeyring().file_path
 
 class CommandLineTool(object):
     def __init__(self):
         self.aesmodes = CryptFileKeyring._get_mode()
         self.parser = argparse.ArgumentParser(
-                        usage = '%(prog)s [-hvkf] aesmode [infile] [outfile]',
+                        usage = '%(prog)s [-hvk] aesmode [infile] [outfile]',
                         epilog = NOTE,
                         formatter_class=argparse.RawDescriptionHelpFormatter)
         self.parser.add_argument('aesmode', help = 'new AES mode [one of: %s]' %
-                                 ', '.join(self.aesmodes))
-        self.parser.add_argument('infile', help = 'File to convert',
+                                                   ', '.join(self.aesmodes))
+        self.parser.add_argument('infile',
+                                 help = 'Keyring file to convert',
                                  nargs = '?')
         self.parser.add_argument('outfile',
-                                 help = 'Converted file [default: infile.pid]',
+                                 help = 'New keyring file [default: infile.pid]',
                                  nargs = '?')
         self.parser.add_argument('-v', '--verbose',
                                  help = 'verbose mode (cumulative)',
@@ -40,15 +45,11 @@ class CommandLineTool(object):
         self.parser.add_argument('-k', '--keep',
                                  help = 'keep old password',
                                  action = 'store_true')
-        self.parser.add_argument('-f', '--force',
-                                 help = 'replace existing outfile',
-                                 action = 'store_true')
 
     def run(self, argv):
+        # parse args, setup logging and prepare keyrings
         args = self.parser.parse_args(argv)
-
         self.setup_logging(args.verbose)
-
         inkr = CryptFileKeyring()
         outkr = CryptFileKeyring()
         outkr.aesmode = args.aesmode
@@ -60,51 +61,41 @@ class CommandLineTool(object):
         else:
             inkr.file_path = infile
             inkr.filename = os.path.basename(infile)
-
         if not os.path.exists(infile):
-            self.parser.exit(3, '%s not found\n' % infile)
-
+            self.errexit('%s not found' % infile)
         if not inkr._check_file():
-            self.parser.exit(3, 'Failed to parse %s\n' % infile)
-
+            self.errexit('Failed to parse %s' % infile)
         log.info('infile %s: %s', infile, inkr.scheme)
 
-        # prepare infile
+        # prepare outfile
         outfile = args.outfile
         if not outfile:
             outfile = infile + '.%d' % os.getpid()
-
-        if os.path.samefile(infile, outfile):
-            self.parser.exit(3, 'infile and outfile must not the same file\n')
-
         if os.path.exists(outfile):
-            if args.force:
-                #os.remove(outfile)
-                #log.info('%s removed', outfile)
-                os.rename(outfile, outfile + '~')
-                log.info('%s renamed to %s~', outfile, outfile)
-            else:
-                self.parser.exit(3, '%s exists already\n' % outfile)
-
+            if os.path.samefile(infile, outfile):
+                self.errexit('infile and outfile must NOT be the same file')
+            # outfile exists: rename
+            os.rename(outfile, outfile + '~')
+            log.info('%s renamed to %s~', outfile, outfile)
         outkr.file_path = outfile
         outkr.filename = os.path.basename(outfile)
-
         log.info('outfile %s: %s', outfile, outkr.scheme)
 
         # unlock the infile keyring
         try:
             inkr.keyring_key
         except ValueError as e:
-            self.parser.exit(3, 'Unlock %s: %s\n' % (infile, e))
+            self.errexit('Unlock %s: %s' % (infile, e))
 
+        # keep old password or request password for new keyring
         if args.keep:
             outkr._get_new_password = lambda: inkr.keyring_key
         else:
             outkr.keyring_key
 
+        # process infile
         config = configparser.RawConfigParser()
         config.read(infile)
-
         for section in config.sections():
             log.debug('process section: [%s]', section)
             if section != escape('keyring-setting'):
@@ -121,13 +112,21 @@ class CommandLineTool(object):
 
         return 0
 
+    def errexit(self, msg, retcode = 1):
+        log.error(msg)
+        sys.exit(retcode)
+
     def setup_logging(self, verbose):
         for idx, loglevel in enumerate(range(logging.WARNING,
                                              logging.NOTSET,
                                              -10)):
             if idx == verbose:
                 break
-        logging.basicConfig(level = loglevel)
+        logging.basicConfig(
+            level = loglevel,
+            format = '%(asctime)s %(levelname)5s: %(message)s',
+            datefmt = '%Y-%m-%d %H:%M:%S',
+        )
 
 
 def main(argv=None):
