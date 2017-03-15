@@ -24,13 +24,13 @@ class PlaintextKeyring(Keyring):
     scheme = 'no encyption'
     version = '1.0'
 
-    def encrypt(self, password):
-        """Directly return the password itself.
+    def encrypt(self, password, assoc = None):
+        """Directly return the password itself, ignore associated data.
         """
         return password
 
-    def decrypt(self, password_encrypted):
-        """Directly return encrypted password.
+    def decrypt(self, password_encrypted, assoc = None):
+        """Directly return encrypted password, ignore associated data.
         """
         return password_encrypted
 
