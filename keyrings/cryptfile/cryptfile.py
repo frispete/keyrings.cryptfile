@@ -44,7 +44,7 @@ class ArgonAESEncryption(object):
         from Crypto.Cipher import AES
 
         aesmode = self._get_mode(self.aesmode)
-        if aesmode is None:
+        if aesmode is None:     # pragma: no cover
             raise ValueError('invalid AES mode: %s' % self.aesmode)
 
         key = hash_secret_raw(
@@ -95,13 +95,13 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         """
         try:
             __import__('argon2.low_level')
-        except ImportError:
+        except ImportError:     # pragma no cover
             raise RuntimeError("argon2_cffi package required")
         try:
             __import__('Crypto.Cipher.AES')
-        except ImportError:
+        except ImportError:     # pragma no cover
             raise RuntimeError("PyCryptodome package required")
-        if not json:
+        if not json:            # pragma no cover
             raise RuntimeError("JSON implementation such as simplejson "
                 "required.")
         return 2.5
