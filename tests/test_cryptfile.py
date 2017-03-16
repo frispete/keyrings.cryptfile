@@ -16,10 +16,10 @@ def is_crypto_supported():
 
 @unittest.skipUnless(is_crypto_supported(),
                      "Need argon2_cffi and PyCryptodome package")
-class CryptFileKeyringTestCase(FileKeyringTests, unittest.TestCase):
+class CryptFileKeyringTests(FileKeyringTests):
 
     def setUp(self):
-        super(self.__class__, self).setUp()
+        super(CryptFileKeyringTests, self).setUp()
         fake_getpass = mock.Mock(return_value='abcdef')
         self.patcher = mock.patch('getpass.getpass', fake_getpass)
         self.patcher.start()
@@ -28,4 +28,32 @@ class CryptFileKeyringTestCase(FileKeyringTests, unittest.TestCase):
         self.patcher.stop()
 
     def init_keyring(self):
-        return cryptfile.CryptFileKeyring()
+        kr = cryptfile.CryptFileKeyring()
+        mode = self.__class__.__name__[:3]
+        if mode in kr._get_mode():
+            kr.aesmode = mode
+        return kr
+
+    def test_file(self):
+        self.assertTrue(self.keyring._check_file() != True)
+
+
+@unittest.skipUnless(is_crypto_supported(),
+                     "Need argon2_cffi and PyCryptodome package")
+class CryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
+    """ test default AES mode (GCM) """
+
+#@unittest.skipUnless(is_crypto_supported(),
+#                     "Need argon2_cffi and PyCryptodome package")
+#class EAXCryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
+#    """ test EAX mode """
+
+#@unittest.skipUnless(is_crypto_supported(),
+#                     "Need argon2_cffi and PyCryptodome package")
+#class CCMCryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
+#    """ test CCM mode """
+
+#@unittest.skipUnless(is_crypto_supported(),
+#                     "Need argon2_cffi and PyCryptodome package")
+#class OCCBCryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
+#    """ test OCB mode """
