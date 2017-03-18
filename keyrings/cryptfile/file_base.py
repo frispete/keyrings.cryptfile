@@ -13,12 +13,12 @@ from keyring.util.escape import escape as escape_for_ini
 
 try:
     encodebytes = base64.encodebytes
-except AttributeError:
+except AttributeError:  # pragma: no cover
     encodebytes = base64.encodestring
 
 try:
     decodebytes = base64.decodebytes
-except AttributeError:
+except AttributeError:  # pragma: no cover
     decodebytes = base64.decodestring
 
 
@@ -157,7 +157,7 @@ class Keyring(FileBacked, KeyringBackend):
         If it doesn't, create it with "go-rwx" permissions.
         """
         storage_root = os.path.dirname(self.file_path)
-        if storage_root and not os.path.isdir(storage_root):
+        if storage_root and not os.path.isdir(storage_root):    # pragma: no cover
             os.makedirs(storage_root)
         if not os.path.isfile(self.file_path):
             # create the file without group/world permissions
