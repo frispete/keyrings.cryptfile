@@ -39,7 +39,7 @@ class Encrypted(object):
     """
     PyCrypto-backed Encryption support
     """
-    scheme = 'PyCrypto [PBKDF2] AES256.CFB'
+    scheme = '[PBKDF2] AES256.CFB'
     version = '1.0'
     block_size = 32
 
@@ -57,10 +57,10 @@ class Encrypted(object):
             password = getpass.getpass(
                 "Please set a password for your new keyring: ")
             confirm = getpass.getpass('Please confirm the password: ')
-            if password != confirm:
+            if password != confirm:     # pragma: no cover
                 sys.stderr.write("Error: Your passwords didn't match\n")
                 continue
-            if '' == password.strip():
+            if '' == password.strip():  # pragma: no cover
                 # forbid the blank password
                 sys.stderr.write("Error: blank passwords aren't allowed.\n")
                 continue
@@ -81,9 +81,9 @@ class EncryptedKeyring(Encrypted, Keyring):
             __import__('Crypto.Cipher.AES')
             __import__('Crypto.Protocol.KDF')
             __import__('Crypto.Random')
-        except ImportError:
+        except ImportError:     # pragma: no cover
             raise RuntimeError("PyCrypto required")
-        if not json:
+        if not json:            # pragma: no cover
             raise RuntimeError("JSON implementation such as simplejson "
                 "required.")
         return .6
@@ -130,22 +130,19 @@ class EncryptedKeyring(Encrypted, Keyring):
             )
         except (configparser.NoSectionError, configparser.NoOptionError):
             return False
-        scheme_valid = self._check_scheme(config)
-        if scheme_valid is None:
+        try:
+            self._check_scheme(config)
+        except AttributeError:
             # accept a missing scheme
             return True
-        elif scheme_valid is False:
-            return False
         return self._check_version(config)
 
     def _check_scheme(self, config):
         """
         check for a valid scheme
-        accept a missing scheme for backwards compatibility
 
-        return None, if scheme is missing
-        return True, if scheme is valid
         raise ValueError otherwise
+        raise AttributeError if missing
         """
         try:
             scheme = config.get(
@@ -153,11 +150,15 @@ class EncryptedKeyring(Encrypted, Keyring):
                 escape_for_ini('scheme'),
             )
         except (configparser.NoSectionError, configparser.NoOptionError):
-            return
+            raise AttributeError("Encryption scheme missing")
+
+        # remove pointless crypto module name
+        if scheme.startswith('PyCrypto '):
+            scheme = scheme[9:]
+
         if scheme != self.scheme:
             raise ValueError("Encryption scheme mismatch "
                              "(exp.: %s, found: %s)" % (self.scheme, scheme))
-        return True
 
     def _check_version(self, config):
         """
