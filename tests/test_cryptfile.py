@@ -91,5 +91,5 @@ class CCMCryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
 
 @unittest.skipUnless(is_crypto_supported(),
                      "Need argon2_cffi and PyCryptodome package")
-class OCCBCryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
+class OCBCryptFileKeyringTestCase(CryptFileKeyringTests, unittest.TestCase):
     """ test OCB mode """
