@@ -95,13 +95,13 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         """
         try:
             __import__('argon2.low_level')
-        except ImportError:     # pragma no cover
+        except ImportError:     # pragma: no cover
             raise RuntimeError("argon2_cffi package required")
         try:
             __import__('Crypto.Cipher.AES')
-        except ImportError:     # pragma no cover
+        except ImportError:     # pragma: no cover
             raise RuntimeError("PyCryptodome package required")
-        if not json:            # pragma no cover
+        if not json:            # pragma: no cover
             raise RuntimeError("JSON implementation such as simplejson "
                 "required.")
         return 2.5
@@ -134,8 +134,8 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         """
         check for a valid scheme
 
-        return True, if scheme is valid
-        raise ValueError otherwise
+        raise AttributeError if missing
+        raise ValueError if not valid
         """
         try:
             scheme = config.get(
@@ -143,7 +143,7 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
                 escape_for_ini('scheme'),
             )
         except (configparser.NoSectionError, configparser.NoOptionError):
-            raise ValueError("Encryption scheme missing")
+            raise AttributeError("Encryption scheme missing")
 
         # extract AES mode
         aesmode = scheme[-3:]
@@ -161,7 +161,6 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
         if scheme != self.scheme:
             raise ValueError("Encryption scheme mismatch "
                              "(exp.: %s, found: %s)" % (self.scheme, scheme))
-        return True
 
     def _check_version(self, config):
         """
