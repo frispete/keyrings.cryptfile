@@ -96,9 +96,9 @@ class Keyring(FileBacked, KeyringBackend):
         """
         Read the password from the file.
         """
+        assoc = self._generate_assoc(service, username)
         service = escape_for_ini(service)
         username = escape_for_ini(username)
-        assoc = (service + '\0' + username).encode()
 
         # load the passwords from the file
         config = configparser.RawConfigParser()
@@ -123,14 +123,19 @@ class Keyring(FileBacked, KeyringBackend):
     def set_password(self, service, username, password):
         """Write the password in the file.
         """
-        assoc = (escape_for_ini(service) + '\0' +
-                 escape_for_ini(username)).encode()
+        assoc = self._generate_assoc(service, username)
         # encrypt the password
         password_encrypted = self.encrypt(password.encode('utf-8'), assoc)
         # encode with base64 and add line break to untangle config file
         password_base64 = '\n' + encodebytes(password_encrypted).decode()
 
         self._write_config_value(service, username, password_base64)
+
+    def _generate_assoc(self, service, username):
+        """Generate tamper resistant bytestring of associated data
+        """
+        return (escape_for_ini(service) + '\0' +
+                escape_for_ini(username)).encode()
 
     def _write_config_value(self, service, key, value):
         # ensure the file exists
