@@ -77,18 +77,19 @@ class Keyring(FileBacked, KeyringBackend):
     @abc.abstractmethod
     def encrypt(self, password, assoc = None):
         """
-        Given a password (byte string), return an encrypted byte string.
+        Given a password (byte string) and assoc (byte string, optional),
+        return an encrypted byte string.
 
-        assoc might provide associated data (typically: service and username)
+        assoc provides associated data (typically: service and username)
         """
 
     @abc.abstractmethod
     def decrypt(self, password_encrypted, assoc = None):
         """
-        Given a password encrypted by a previous call to `encrypt`, return
-        the original byte string.
+        Given a password encrypted by a previous call to `encrypt`, and assoc
+        (byte string, optional), return the original byte string.
 
-        assoc might provide associated data (typically: service and username)
+        assoc provides associated data (typically: service and username)
         """
 
     def get_password(self, service, username):
