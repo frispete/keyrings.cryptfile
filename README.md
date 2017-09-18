@@ -2,7 +2,7 @@ Summary
 -------
 
 Encrypted plain file keyring backend for use with the
-`keyring package <https://pypi.python.org/pypi/keyring>`_.
+[keyring](https://pypi.python.org/pypi/keyring)  package.
 
 Description
 -----------
@@ -41,17 +41,18 @@ data as well as its reference (service/userid).
 Quick start guide
 -----------------
 
-In order to get you started, you will need to have a python2/python3 environment
-and git available (preferably on a linux system).
+In order to get you started, you will need to have a `python2/python3` environment
+and `git` available (preferably on a linux system).
 
-You might want to provide the python packages argon2-cffi, keyring, pycryptodome
-and their dependencies (most notably SecretStorage and cryptography) with your
+You might want to provide the python packages [argon2-cffi](https://pypi.python.org/pypi/argon2_cffi), [keyring](https://pypi.python.org/pypi/keyring), [pycryptodome](https://pypi.python.org/pypi/pycryptodome)
+and their dependencies (most notably [SecretStorage](https://pypi.python.org/pypi/SecretStorage) and [cryptography](https://pypi.python.org/pypi/cryptography)) with your
 system package management, or use a local venv, but that will depend on a
 properly working C compiler and some development packages installed
-(python-devel and openssl-devel at least).
+(`python-devel` and `openssl-devel` at least).
 
 Setup package and environment
 -----------------------------
+
 ```
 $ git clone https://github.com/frispete/keyrings.cryptfile
 $ cd keyrings.cryptfile
@@ -68,6 +69,7 @@ Example session
 
 Create an encrypted keyring, and store a test password into it. The process asks
 for the keyring password itself, that protects your stored keyring values.
+
 ```
 (env) $ python3
 Python 3.4.5 (default, Jul 03 2016, 12:57:15) [GCC] on linux
@@ -81,6 +83,7 @@ Please confirm the password: ******
 ```
 
 Now retrieve the stored secret from the keyring again:
+
 ```
 (env) $ python3
 Python 3.4.5 (default, Jul 03 2016, 12:57:15) [GCC] on linux
@@ -93,13 +96,14 @@ Please enter password for encrypted keyring: ******
 >>> ^d
 ```
 
-Note, that the KDF delays the {set,get}_password() operations for a few seconds
+Note, that the KDF delays the `{set,get}_password()` operations for a few seconds
 (~1 sec. on a capable system).
 
 Result
 ------
+
+The resulting file might look similar to:
 ```
-The resulting file is located here (by default) and might look similar to:::
 (env) $ cat ~/.local/share/python_keyring/cryptfile_pass.cfg
 [keyring_2Dsetting]
 password_20reference =
@@ -134,15 +138,17 @@ b'{"mac": "i2x1hMTbuKJSdLXIt0GGjQ==",
 Discussion
 ----------
 
-The items of this json dict constitute the encryption parameters and value. In
-theory, it should be sufficiently *hard* to get back to the plain value of
-*data* without knowledge of the password.
+The items of the json dict constitute the encryption parameters and value. In
+theory, it should be sufficiently **hard** to get back to the plain value of
+**data** without knowledge of the password. Due to the association of the values
+reference (`service` and `user` here) with the authenticated encryption,
+modifications of values reference are detected/rejected as well.
 
-The class hierarchy is inherited from the keyrings.alt project, and is not
-exactly easy to follow. The most interesting parts are all in
-*keyrings/cryptfile/cryptfile.py*, which is quite concise itself, even if not
-fluent in python.
+The class hierarchy is inherited from the keyrings.alt project, which is not
+exactly easy to follow. The most interesting parts are in
+*keyrings/cryptfile/cryptfile.py*, which is quite concise itself, even if you're
+not fluent in python.
 
-In order to control these processes any further, you might want to subclass
-CryptFileKeyring and PlaintextKeyring.
+In order to control this process any further, you might want to subclass
+`CryptFileKeyring` and/or `PlaintextKeyring`.
 
