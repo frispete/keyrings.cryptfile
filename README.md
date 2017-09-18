@@ -6,71 +6,68 @@ Encrypted plain file keyring backend for use with the
 
 Description
 -----------
-The project is mainly targeted on a sufficiently secure storage for plain text 
-passwords (keyring) in a simple portable file, where the default keyring storage 
+The project is mainly targeted on a sufficiently secure storage for plain text
+passwords (keyring) in a simple portable file, where the default keyring storage
 implementation of a usual desktop environment doesn't fit.
 
 Cryptography
 ------------
-The keyring is secured with a keyring password. A raw 
-`Argon2(\$argon2id\$v=19\$m=65536,t=15,p=2)` hash is generated from the keyring 
-password, which is used as a key for encryption of plaintext passwords in one of 
-the supported authenticated AES encryption schemes (CCM, EAX, GCM, OCB), where 
-GCM is the default. The resulting encrypted data is persisted, together with the 
-Argon2 salt, nonce and MAC. This value is stored with a service/userid reference 
-in a text file (.ini format). The service/userid is taken into account as 
+The keyring is secured with a keyring password. A raw
+`Argon2($argon2id$v=19$m=65536,t=15,p=2)` hash is generated from the keyring
+password, which is used as a key for encryption of plaintext passwords in one of
+the supported authenticated AES encryption schemes (CCM, EAX, GCM, OCB), where
+GCM is the default. The resulting encrypted data is persisted, together with the
+Argon2 salt, nonce and MAC. This value is stored with a service/userid reference
+in a text file (.ini format). The service/userid is taken into account as
 associated data for MAC calculation.
 
-Initially, a static reference value, treated as a password is stored as well, 
-and this value is used for verification of the keyring password in subsequent 
+Initially, a static reference value, treated as a password is stored as well,
+and this value is used for verification of the keyring password in subsequent
 accesses.
 
 Attack surface
 --------------
-The static reference value allow some form of attack, as it encrypts a well 
-known value. Hopefully, the Argon2 hash, combined with the authenticated AES 
+The static reference value allow some form of attack, as it encrypts a well
+known value. Hopefully, the Argon2 hash, combined with the authenticated AES
 encryption scheme raises the effort to break the key sufficiently high.
 
-The Argon2 parameterization is chosen in a way, that usual desktop and server 
-systems today (2017) have to process a significant CPU and Memory load in order 
-to calculate the hashes, which renders brute force attacks impractical. 
+The Argon2 parameterization is chosen in a way, that usual desktop and server
+systems as of today (2017) have to process a significant CPU and Memory load
+in order to calculate the hashes, which renders brute force attacks impractical.
 
-The authenticated AES encryption scheme prevents tampering with the encrypted 
+The authenticated AES encryption scheme prevents tampering with the encrypted
 data as well as its reference (service/userid).
 
 Quick start guide
 -----------------
 
-In order to get you started, you will need to have a python2/python3 environment 
+In order to get you started, you will need to have a python2/python3 environment
 and git available (preferably on a linux system).
 
-You might want to provide the python packages argon2-cffi, keyring, pycryptodome 
-and their dependencies (most notably SecretStorage and cryptography) with your 
-system package management, or use a local venv, but that will depend on a 
-properly working C compiler and some development packages installed 
+You might want to provide the python packages argon2-cffi, keyring, pycryptodome
+and their dependencies (most notably SecretStorage and cryptography) with your
+system package management, or use a local venv, but that will depend on a
+properly working C compiler and some development packages installed
 (python-devel and openssl-devel at least).
 
 Setup package and environment
 -----------------------------
-
 ```
 $ git clone https://github.com/frispete/keyrings.cryptfile
 $ cd keyrings.cryptfile
 $ pyvenv env
 $ . env/bin/activate
 (env) $ pip install -e .
-
 ```
 
-The last command should succeed without errors, some development packages might 
+The last command should succeed without errors, some development packages might
 be missing otherwise.
 
 Example session
 ---------------
 
-Create an encrypted keyring, and store a test password into it. The process asks 
+Create an encrypted keyring, and store a test password into it. The process asks
 for the keyring password itself, that protects your stored keyring values.
-
 ```
 (env) $ python3
 Python 3.4.5 (default, Jul 03 2016, 12:57:15) [GCC] on linux
@@ -81,11 +78,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 Please set a password for your new keyring: ******
 Please confirm the password: ******
 >>> ^d
-
 ```
 
 Now retrieve the stored secret from the keyring again:
-
 ```
 (env) $ python3
 Python 3.4.5 (default, Jul 03 2016, 12:57:15) [GCC] on linux
@@ -96,18 +91,15 @@ Type "help", "copyright", "credits" or "license" for more information.
 Please enter password for encrypted keyring: ******
 'secret'
 >>> ^d
-
 ```
 
-Note, that the KDF delays the {set,get}_password() operations for a few seconds 
+Note, that the KDF delays the {set,get}_password() operations for a few seconds
 (~1 sec. on a capable system).
 
 Result
 ------
-
-The resulting file is located here (by default) and might look similar to:
-
 ```
+The resulting file is located here (by default) and might look similar to:::
 (env) $ cat ~/.local/share/python_keyring/cryptfile_pass.cfg
 [keyring_2Dsetting]
 password_20reference =
@@ -122,7 +114,6 @@ user =
     eyJtYWMiOiAiaTJ4MWhNVGJ1S0pTZExYSXQwR0dqUT09IiwgIm5vbmNlIjogIlJ5YU1DZmkyZ0JE
     NStlNHN6MGpQRWc9PSIsICJzYWx0IjogIjlIM1hJbDVhZmRZaVhkTUZyTWNOV2c9PSIsICJkYXRh
     IjogImhNVC9LaTRYIn0=
-
 ```
 
 The values can be decoded like this:
@@ -138,21 +129,20 @@ b'{"mac": "i2x1hMTbuKJSdLXIt0GGjQ==",
    "nonce": "RyaMCfi2gBD5+e4sz0jPEg==",
     "salt": "9H3XIl5afdYiXdMFrMcNWg==",
     "data": "hMT/Ki4X"}'
-
 ```
 
 Discussion
 ----------
 
-The items of this json dict constitute the encryption parameters and value. In 
-theory, it should be sufficiently *hard* to get back to the plain value of 
+The items of this json dict constitute the encryption parameters and value. In
+theory, it should be sufficiently *hard* to get back to the plain value of
 *data* without knowledge of the password.
 
-The class hierarchy is inherited from the keyrings.alt project, and is not 
-exactly easy to follow. The most interesting parts are all in 
-*keyrings/cryptfile/cryptfile.py*, which is quite concise itself, even if not 
+The class hierarchy is inherited from the keyrings.alt project, and is not
+exactly easy to follow. The most interesting parts are all in
+*keyrings/cryptfile/cryptfile.py*, which is quite concise itself, even if not
 fluent in python.
 
-In order to control these processes any further, you might want to subclass 
+In order to control these processes any further, you might want to subclass
 CryptFileKeyring and PlaintextKeyring.
 
