@@ -5,7 +5,7 @@ import io
 
 import setuptools
 
-with io.open('README.rst', encoding='utf-8') as readme:
+with io.open('README.md', encoding='utf-8') as readme:
     long_description = readme.read()
 
 
