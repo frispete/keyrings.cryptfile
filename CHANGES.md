@@ -1,4 +1,4 @@
-2.0
+1.1
 ===
 
 - Keyrings namespace package has switched from pkg_resources
