@@ -24,7 +24,6 @@ setup_params = dict(
     license = 'MIT',
     packages = setuptools.find_packages(exclude=['tests']),
     include_package_data = True,
-    namespace_packages = name.split('.')[:-1],
     install_requires = [
         'argon2_cffi',
         'keyring',
