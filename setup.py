@@ -24,6 +24,7 @@ setup_params = dict(
     license = 'MIT',
     packages = setuptools.find_packages(exclude=['tests']),
     include_package_data = True,
+    python_requires = '>=2.7',
     install_requires = [
         'argon2_cffi',
         'keyring',
@@ -39,7 +40,10 @@ setup_params = dict(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     entry_points = {
         'keyring.backends': [
