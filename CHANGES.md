@@ -1,8 +1,15 @@
-1.1
+1.2
 ===
 
 - Keyrings namespace package has switched from pkg_resources
-  to pkgutil for native namespace package support.
+  to pkgutil for native namespace package support. Thanks, Jason.
+- adjust copyright year in license
+- be more specific about python versions
+
+1.1
+===
+
+- improve description and switch to markdown
 
 1.0
 ===
