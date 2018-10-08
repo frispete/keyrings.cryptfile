@@ -8,11 +8,11 @@ import getpass
 from keyring.py27compat import configparser
 
 from keyring.util import properties
-from keyring.util.escape import escape as escape_for_ini
 
 from keyrings.cryptfile.file_base import (
         Keyring, decodebytes, encodebytes,
 )
+from keyrings.cryptfile._escape import escape as escape_for_ini
 
 class PlaintextKeyring(Keyring):
     """Simple File Keyring with no encryption"""

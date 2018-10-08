@@ -4,9 +4,8 @@ from unittest import mock
 
 from .test_file import FileKeyringTests
 
-from keyring.util.escape import escape as escape_for_ini
-
 from keyrings.cryptfile import cryptfile
+from keyrings.cryptfile._escape import escape as escape_for_ini
 
 def is_crypto_supported():
     try:
