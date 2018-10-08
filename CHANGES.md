@@ -1,3 +1,8 @@
+1.3
+===
+
+- Compatibility with keyring 15. Thanks, Niklas.
+
 1.2
 ===
 
