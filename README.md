@@ -152,3 +152,5 @@ not fluent in python.
 In order to control this process any further, you might want to subclass
 `CryptFileKeyring` and/or `PlaintextKeyring`.
 
+As noted be Wade, you can avoid the interactive getpass() request for the keyring
+with supplying `kr.keyring_key = "your keyring password"`.
