@@ -10,12 +10,6 @@ https://github.com/jaraco/keyring/blob/master/CHANGES.rst#1500
 import re
 import string
 import sys
-import warnings
-
-warnings.warn(
-    "escape is deprecated and will be removed",
-    DeprecationWarning,
-)
 
 # True if we are running on Python 3.
 # taken from six.py
