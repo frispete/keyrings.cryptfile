@@ -10,9 +10,9 @@ import argparse
 log = logging.getLogger('convert')
 
 from keyring.py27compat import configparser
-from keyring.util.escape import escape, unescape
 
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
+from keyrings.cryptfile._escape import escape, unescape
 
 NOTE = """\
 Note: no effort has been made to replace the original keyring file.

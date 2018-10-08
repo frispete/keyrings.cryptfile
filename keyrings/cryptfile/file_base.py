@@ -9,7 +9,8 @@ from keyring.py27compat import configparser
 from keyring.errors import PasswordDeleteError
 from keyring.backend import KeyringBackend
 from keyring.util import platform_, properties
-from keyring.util.escape import escape as escape_for_ini
+
+from keyrings.cryptfile._escape import escape as escape_for_ini
 
 try:
     encodebytes = base64.encodebytes
