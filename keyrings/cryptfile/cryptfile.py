@@ -10,7 +10,7 @@ from keyrings.cryptfile.file import EncryptedKeyring
 from keyrings.cryptfile.file_base import decodebytes, encodebytes
 from keyrings.cryptfile._escape import escape as escape_for_ini
 
-__version__ = '1.0'
+__version__ = '1.3'
 
 DEFAULT_TIME_COST = 15
 DEFAULT_MEMORY_COST = 2**16     # 64 MB
