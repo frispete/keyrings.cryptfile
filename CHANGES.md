@@ -2,6 +2,13 @@
 ===
 
 - Compatibility with keyring 15. Thanks, Niklas.
+- Add note about keyring_key. Thanks, Wade.
+- Clean up setup.py, fetch version from cryptfile
+
+1.2.1
+=====
+
+- Flag markdown readme correctly in setup (for PyPi).
 
 1.2
 ===
