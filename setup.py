@@ -2,8 +2,8 @@
 # vim:set et ts=8 sw=4:
 
 import io
-
 import setuptools
+from keyrings.cryptfile.cryptfile import __version__ as version
 
 with io.open('README.md', encoding='utf-8') as readme:
     long_description = readme.read()
@@ -15,8 +15,7 @@ description = 'Encrypted file keyring backend'
 
 setup_params = dict(
     name = name,
-    #use_scm_version = True,
-    version = '1.2.1',
+    version = version,
     author = 'Hans-Peter Jansen',
     author_email = 'hpj@urpla.net',
     description = description or name,
@@ -32,11 +31,8 @@ setup_params = dict(
         'keyring',
         'pycryptodome',
     ],
-    extras_require = {
-    },
-    setup_requires = [
-        #'setuptools_scm>=1.15.0',
-    ],
+    extras_require = {},
+    setup_requires = [],
     classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
