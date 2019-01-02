@@ -3,7 +3,7 @@
 
 import io
 import setuptools
-from keyrings.cryptfile.cryptfile import __version__ as version
+from keyrings.cryptfile import __version__ as version
 
 with io.open('README.md', encoding='utf-8') as readme:
     long_description = readme.read()
