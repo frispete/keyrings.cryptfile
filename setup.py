@@ -7,7 +7,7 @@ from keyrings.cryptfile import __version__ as version
 
 with io.open('README.md', encoding='utf-8') as readme:
     long_description = readme.read()
-    long_description_content_type = 'text/markdown',
+    long_description_content_type = 'text/markdown'
 
 
 name = 'keyrings.cryptfile'

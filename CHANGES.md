@@ -1,3 +1,14 @@
+1.3.2
+=====
+
+- Fix PyPI description formatting
+
+1.3.1
+=====
+
+- Fix install issues, if keyring isn''t installed beforehand.
+  Thanks, Erik.
+
 1.3
 ===
 
@@ -8,7 +19,7 @@
 1.2.1
 =====
 
-- Flag markdown readme correctly in setup (for PyPi).
+- Flag markdown readme correctly in setup (for PyPI).
 
 1.2
 ===
