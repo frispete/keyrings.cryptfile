@@ -1,3 +1,8 @@
+1.3.3
+=====
+
+- fix showstopper, introduced by 1.3.1 changes
+
 1.3.2
 =====
 

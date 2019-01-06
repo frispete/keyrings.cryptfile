@@ -6,6 +6,7 @@ import json
 from keyring.py27compat import configparser
 from keyring.util import properties
 
+from keyrings.cryptfile import __version__ as version
 from keyrings.cryptfile.file import EncryptedKeyring
 from keyrings.cryptfile.file_base import decodebytes, encodebytes
 from keyrings.cryptfile._escape import escape as escape_for_ini
@@ -21,7 +22,7 @@ class ArgonAESEncryption(object):
     AEAD AES encryption (default: GCM) with Argon2 based KDF support
     """
     aesmode = DEFAULT_AES_MODE
-    version = __version__
+    version = version
     file_version = None
 
     time_cost = DEFAULT_TIME_COST
