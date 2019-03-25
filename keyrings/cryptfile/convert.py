@@ -9,7 +9,7 @@ import argparse
 
 log = logging.getLogger('convert')
 
-from keyring.py27compat import configparser
+import configparser
 
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
 from keyrings.cryptfile._escape import escape, unescape

@@ -3,7 +3,7 @@ from __future__ import with_statement
 import os
 import json
 
-from keyring.py27compat import configparser
+import configparser
 from keyring.util import properties
 
 from keyrings.cryptfile import __version__ as version

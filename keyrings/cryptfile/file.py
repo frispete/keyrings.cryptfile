@@ -5,7 +5,7 @@ import sys
 import json
 import getpass
 
-from keyring.py27compat import configparser
+import configparser
 
 from keyring.util import properties
 

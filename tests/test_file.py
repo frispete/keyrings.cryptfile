@@ -10,7 +10,7 @@ from unittest import mock
 from keyring.tests.test_backend import BackendBasicTests
 from keyring.tests.util import random_string
 
-from keyring.py27compat import configparser
+import configparser
 
 from keyrings.cryptfile import file
 from keyrings.cryptfile.file_base import encodebytes
