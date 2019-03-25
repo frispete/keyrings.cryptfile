@@ -41,7 +41,7 @@ data as well as its reference (service/userid).
 Quick start guide
 -----------------
 
-In order to get you started, you will need to have a `python2/python3` environment
+In order to get you started, you will need to have a `python3` environment
 and `git` available (preferably on a linux system).
 
 You might want to provide the python packages [argon2-cffi](https://pypi.python.org/pypi/argon2_cffi), [keyring](https://pypi.python.org/pypi/keyring), [pycryptodome](https://pypi.python.org/pypi/pycryptodome)
