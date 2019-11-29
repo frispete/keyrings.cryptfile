@@ -152,6 +152,18 @@ not fluent in python.
 In order to control this process any further, you might want to subclass
 `CryptFileKeyring` and/or `PlaintextKeyring`.
 
+Notes
+-----
+
 You can avoid the interactive getpass() request for the keyring password by
 supplying `kr.keyring_key = "your keyring password"` before calling any other
-methods on the keyring.
+methods on the keyring. The following example shows a simple way to retrieve the 
+password from an environment variable `KEYRING_CRYPTFILE_PASSWORD`, when present:
+```python
+from getpass import getpass
+from os import getenv
+from keyrings.cryptfile.cryptfile import CryptFileKeyring
+kr = CryptFileKeyring()
+kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD") or getpass()
+keyring.set_keyring(kr)
+```
