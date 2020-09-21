@@ -7,8 +7,8 @@ import unittest
 import pytest
 from unittest import mock
 
-from keyring.tests.test_backend import BackendBasicTests
-from keyring.tests.util import random_string
+from keyring.testing.backend import BackendBasicTests
+from keyring.testing.util import random_string
 
 import configparser
 
