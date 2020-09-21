@@ -1,3 +1,7 @@
+1.3.5
+=====
+- adjust to current keyring testing
+
 1.3.4
 =====
 - remove support for Python 2.7 and keyring versions prior to 19.0.0
