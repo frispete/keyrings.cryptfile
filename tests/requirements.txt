@@ -1,6 +1,5 @@
 pytest >= 2.8
-backports.unittest_mock
-keyring[test]
+keyring[testing]
 
 pycryptodome
 argon2_cffi
