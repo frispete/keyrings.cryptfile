@@ -1,29 +1,10 @@
 """
 escape/unescape routines available for backends which need
 alphanumeric usernames, services, or other values
-
-Originally provided by the keyring module, these escape utility
-routines have been removed from it in version 15.0.0, see
-https://github.com/jaraco/keyring/blob/master/CHANGES.rst#1500
 """
 
 import re
 import string
-import sys
-
-# True if we are running on Python 3.
-# taken from six.py
-PY3 = sys.version_info[0] == 3
-
-# allow use of unicode literals
-if PY3:
-    def u(s):
-        return s
-else:
-    def u(s):
-        return s.decode('utf-8')
-
-_unichr = chr if PY3 else unichr  # noqa: F821
 
 LEGAL_CHARS = (
     getattr(string, 'letters', None)  # Python 2
@@ -36,7 +17,7 @@ ESCAPE_FMT = "_%02X"
 def _escape_char(c):
     "Single char escape. Return the char, escaped if not already legal"
     if isinstance(c, int):
-        c = _unichr(c)
+        c = chr(c)
     return c if c in LEGAL_CHARS else ESCAPE_FMT % ord(c)
 
 
@@ -50,7 +31,7 @@ def escape(value):
 
 def _unescape_code(regex_match):
     ordinal = int(regex_match.group('code'), 16)
-    return bytes([ordinal]) if PY3 else chr(ordinal)
+    return bytes([ordinal])
 
 
 def unescape(value):
