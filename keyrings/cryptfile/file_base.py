@@ -2,25 +2,13 @@ from __future__ import with_statement
 
 import os
 import abc
-import base64
-
 import configparser
+from base64 import encodebytes, decodebytes
 
 from keyring.errors import PasswordDeleteError
 from keyring.backend import KeyringBackend
 from keyring.util import platform_, properties
-
-from keyrings.cryptfile._escape import escape as escape_for_ini
-
-try:
-    encodebytes = base64.encodebytes
-except AttributeError:  # pragma: no cover
-    encodebytes = base64.encodestring
-
-try:
-    decodebytes = base64.decodebytes
-except AttributeError:  # pragma: no cover
-    decodebytes = base64.decodestring
+from .escape import escape as escape_for_ini
 
 
 class FileBacked(object):
@@ -60,8 +48,10 @@ class FileBacked(object):
         return None
 
     def __repr__(self):
-        tmpl = "<{self.__class__.__name__} with {self.scheme} " \
-               "v.{self.version} at {self.file_path}>"
+        tmpl = (
+            "<{self.__class__.__name__} with {self.scheme} "
+            "v.{self.version} at {self.file_path}>"
+        )
         return tmpl.format(**locals())
 
 
@@ -76,7 +66,7 @@ class Keyring(FileBacked, KeyringBackend):
     """
 
     @abc.abstractmethod
-    def encrypt(self, password, assoc = None):
+    def encrypt(self, password, assoc=None):
         """
         Given a password (byte string) and assoc (byte string, optional),
         return an encrypted byte string.
@@ -85,7 +75,7 @@ class Keyring(FileBacked, KeyringBackend):
         """
 
     @abc.abstractmethod
-    def decrypt(self, password_encrypted, assoc = None):
+    def decrypt(self, password_encrypted, assoc=None):
         """
         Given a password encrypted by a previous call to `encrypt`, and assoc
         (byte string, optional), return the original byte string.
@@ -122,8 +112,12 @@ class Keyring(FileBacked, KeyringBackend):
         return password
 
     def set_password(self, service, username, password):
-        """Write the password in the file.
-        """
+        """Write the password in the file."""
+        if not username:
+            # https://github.com/jaraco/keyrings.alt/issues/21
+            raise ValueError("Username cannot be blank.")
+        if not isinstance(password, str):
+            raise TypeError("Password should be a unicode string, not bytes.")
         assoc = self._generate_assoc(service, username)
         # encrypt the password
         password_encrypted = self.encrypt(password.encode('utf-8'), assoc)
@@ -133,10 +127,8 @@ class Keyring(FileBacked, KeyringBackend):
         self._write_config_value(service, username, password_base64)
 
     def _generate_assoc(self, service, username):
-        """Generate tamper resistant bytestring of associated data
-        """
-        return (escape_for_ini(service) + '\0' +
-                escape_for_ini(username)).encode()
+        """Generate tamper resistant bytestring of associated data"""
+        return (escape_for_ini(service) + r'\0' + escape_for_ini(username)).encode()
 
     def _write_config_value(self, service, key, value):
         # ensure the file exists
@@ -164,7 +156,8 @@ class Keyring(FileBacked, KeyringBackend):
         If it doesn't, create it with "go-rwx" permissions.
         """
         storage_root = os.path.dirname(self.file_path)
-        if storage_root and not os.path.isdir(storage_root):    # pragma: no cover
+        needs_storage_root = storage_root and not os.path.isdir(storage_root)
+        if needs_storage_root:  # pragma: no cover
             os.makedirs(storage_root)
         if not os.path.isfile(self.file_path):
             # create the file without group/world permissions
@@ -174,8 +167,7 @@ class Keyring(FileBacked, KeyringBackend):
             os.chmod(self.file_path, user_read_write)
 
     def delete_password(self, service, username):
-        """Delete the password for the username of the service.
-        """
+        """Delete the password for the username of the service."""
         service = escape_for_ini(service)
         username = escape_for_ini(username)
         config = configparser.RawConfigParser()
