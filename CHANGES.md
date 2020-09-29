@@ -1,3 +1,9 @@
+1.3.6
+=====
+- merge current versions of file.py, file_base.py with tests from keyrings.alt
+- adopt cryptfile tests to pytest
+- rename _escape.py to escape.py
+
 1.3.5
 =====
 - adjust to current keyring testing
