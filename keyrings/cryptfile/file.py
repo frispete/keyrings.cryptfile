@@ -84,20 +84,39 @@ class EncryptedKeyring(Encrypted, Keyring):
             raise RuntimeError("JSON implementation such as simplejson required.")
         return 0.6
 
-    @properties.NonDataProperty
+    def __init__(self):
+        self._keyring_key = None
+
+    @property
     def keyring_key(self):
+        if self._keyring_key is None:
+            self._init_keyring()
+        return self._keyring_key
+
+    @keyring_key.setter
+    def keyring_key(self, key):
+        if '' == key.strip():
+            raise ValueError("Invalid blank password")
+        self._keyring_key = key
+        self._init_keyring()
+
+    @keyring_key.deleter
+    def keyring_key(self):
+        self._keyring_key = None
+
+    def _init_keyring(self):
         # _unlock or _init_file will set the key or raise an exception
         if self._check_file():
             self._unlock()
         else:
             self._init_file()
-        return self.keyring_key
 
     def _init_file(self):
         """
         Initialize a new password file and set the reference password.
         """
-        self.keyring_key = self._get_new_password()
+        if self._keyring_key is None:
+            self._keyring_key = self._get_new_password()
         # set a reference password, used to check that the password provided
         #  matches for subsequent checks.
         self.set_password(
@@ -172,7 +191,8 @@ class EncryptedKeyring(Encrypted, Keyring):
         Unlock this keyring by getting the password for the keyring from the
         user.
         """
-        self.keyring_key = getpass.getpass(
+        if self._keyring_key is None:
+            self._keyring_key = getpass.getpass(
             'Please enter password for encrypted keyring: '
         )
         try:
