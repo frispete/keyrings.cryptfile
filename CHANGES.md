@@ -1,3 +1,7 @@
+1.3.7
+=====
+- attempt to fix explicit keyring_key handling
+
 1.3.6
 =====
 - merge current versions of file.py, file_base.py with tests from keyrings.alt
