@@ -28,7 +28,7 @@ setup_params = dict(
     python_requires = '>=3.5',
     install_requires = [
         'argon2_cffi',
-        'keyring>=19.0.0',
+        'keyring>=20.0.0',
         'pycryptodome',
     ],
     extras_require = {},
