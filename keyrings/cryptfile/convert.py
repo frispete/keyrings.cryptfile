@@ -12,7 +12,7 @@ log = logging.getLogger('convert')
 import configparser
 
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
-from keyrings.cryptfile._escape import escape, unescape
+from keyrings.cryptfile.escape import escape, unescape
 
 NOTE = """\
 Note: no effort has been made to replace the original keyring file.
