@@ -166,6 +166,10 @@ class TestEncryptedFileKeyring(FileKeyringTests):
 
     def test_wrong_password(self):
         self.set_password('system', 'user', 'password')
+        # we need to invalidate the keyring password here
+        # in order trigger the mocked getpass.getpass()
+        self.keyring._lock()
+        # fake a wrong password
         getpass.getpass.return_value = 'wrong'
         with pytest.raises(ValueError):
             self.keyring._unlock()
