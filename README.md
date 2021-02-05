@@ -167,3 +167,12 @@ kr = CryptFileKeyring()
 kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD") or getpass()
 keyring.set_keyring(kr)
 ```
+
+Testing
+-------
+
+Testing is done with pytest as usual. Just executing `pytest` should do the trick.
+A verbose test run is performed with `pytest -v`, while a single test is selected
+with `pytest -vk test_wrong_password`.
+
+Feedback is always welcome.
