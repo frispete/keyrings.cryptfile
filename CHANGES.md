@@ -1,6 +1,8 @@
 1.3.8
 =====
 - Apply rename of _escape.py in convert.py as well. Thanks, Justin.
+- Fix TestEncryptedFileKeyring.test_wrong_password()
+- Relocate tests to keyrings/cryptfile/
 
 1.3.7
 =====
