@@ -1,25 +1,29 @@
+1.3.8
+=====
+- Apply rename of _escape.py in convert.py as well. Thanks, Justin.
+
 1.3.7
 =====
-- attempt to fix explicit keyring_key handling
+- Attempt to fix explicit keyring_key handling
 
 1.3.6
 =====
-- merge current versions of file.py, file_base.py with tests from keyrings.alt
-- adopt cryptfile tests to pytest
-- rename _escape.py to escape.py
+- Merge current versions of file.py, file_base.py with tests from keyrings.alt
+- Adopt cryptfile tests to pytest
+- Rename _escape.py to escape.py
 
 1.3.5
 =====
-- adjust to current keyring testing
+- Adjust to current keyring testing
 
 1.3.4
 =====
-- remove support for Python 2.7 and keyring versions prior to 19.0.0
+- Remove support for Python 2.7 and keyring versions prior to 19.0.0
 
 1.3.3
 =====
 
-- fix showstopper, introduced by 1.3.1 changes
+- Fix showstopper, introduced by 1.3.1 changes
 
 1.3.2
 =====
