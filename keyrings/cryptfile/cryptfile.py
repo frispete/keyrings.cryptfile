@@ -85,7 +85,7 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
     filename = 'cryptfile_pass.cfg'
     pw_prefix = 'pw:'.encode()
 
-    @properties.ClassProperty
+    @properties.classproperty
     @classmethod
     def priority(self):
         """

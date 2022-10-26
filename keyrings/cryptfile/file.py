@@ -70,7 +70,7 @@ class EncryptedKeyring(Encrypted, Keyring):
     filename = 'crypted_pass.cfg'
     pw_prefix = 'pw:'.encode()
 
-    @properties.ClassProperty
+    @properties.classproperty
     @classmethod
     def priority(self):
         "Applicable for all platforms, but not recommended."
