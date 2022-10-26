@@ -120,6 +120,14 @@ class Keyring(FileBacked, KeyringBackend):
             raise ValueError("Username cannot be blank.")
         if not isinstance(password, str):
             raise TypeError("Password should be a unicode string, not bytes.")
+
+        config = configparser.RawConfigParser()
+        if os.path.exists(self.file_path):
+            config.read(self.file_path)
+
+        if hasattr(self, "_check_version"):
+            self._check_version(config)
+
         assoc = self._generate_assoc(service, username)
         # encrypt the password
         password_encrypted = self.encrypt(password.encode('utf-8'), assoc)

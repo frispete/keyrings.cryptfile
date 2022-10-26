@@ -1,5 +1,6 @@
 import getpass
 import pathlib
+import shutil
 from unittest import mock
 
 import pytest
@@ -92,17 +93,35 @@ class TesstOCBCryptFileKeyring(TestCryptFileKeyring):
     """ test OCB mode """
 
 
-@pytest.mark.parametrize(argnames="version", argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8)])
-def test_versions(version, monkeypatch):
+@pytest.mark.parametrize(
+    argnames="version",
+    argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8)],
+    ids=lambda version: ".".join(str(segment) for segment in version),
+)
+@pytest.mark.parametrize(
+    argnames="activities",
+    argvalues=[
+        ["set", "get"],
+        ["get", "set"],
+    ],
+    ids=lambda activities: "_".join(activities),
+)
+def test_versions(version, activities, monkeypatch, tmp_path):
     version_string = ".".join(str(segment) for segment in version)
     filename = f"cp{version_string}.cfg"
-    password = "passwd"
-    secret = "secret"
+    shutil.copyfile(pathlib.Path(__file__).parent.joinpath(filename), tmp_path.joinpath(filename))
 
-    fake_getpass = mock.Mock(return_value=password)
+    fake_getpass = mock.Mock(return_value="passwd")
     monkeypatch.setattr(getpass, 'getpass', fake_getpass)
 
     kr = cryptfile.CryptFileKeyring()
-    kr.file_path = pathlib.Path(__file__).parent.joinpath(filename)
+    kr.file_path = tmp_path.joinpath(filename)
 
-    assert kr.get_password("service", "user") == secret
+    for activity in activities:
+        if activity == "get":
+            assert kr.get_password("service", "user") == "secret"
+        elif activity == "set":
+            kr.set_password("test write", "user", "test password")
+            assert kr.get_password("test write", "user") == "test password"
+        else:
+            raise Exception("unexpected activity selection")
