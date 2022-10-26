@@ -4,7 +4,7 @@ import os
 import json
 
 import configparser
-from keyring.util import properties
+from jaraco.classes import properties
 
 from keyrings.cryptfile import __version__ as version
 from keyrings.cryptfile.file import EncryptedKeyring
