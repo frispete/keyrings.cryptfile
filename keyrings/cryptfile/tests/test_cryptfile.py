@@ -95,8 +95,8 @@ class TesstOCBCryptFileKeyring(TestCryptFileKeyring):
 
 @pytest.mark.parametrize(
     argnames="version",
-    argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8)],
-    ids=lambda version: ".".join(str(segment) for segment in version),
+    argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8), (1, 3, 9)],
+    ids=lambda version: "no version" if version is None else ".".join(str(segment) for segment in version),
 )
 @pytest.mark.parametrize(
     argnames="activities",
@@ -125,3 +125,14 @@ def test_versions(version, activities, monkeypatch, tmp_path):
             assert kr.get_password("test write", "user") == "test password"
         else:
             raise Exception("unexpected activity selection")
+
+
+def test_new_file(monkeypatch, tmp_path):
+    fake_getpass = mock.Mock(return_value="passwd")
+    monkeypatch.setattr(getpass, 'getpass', fake_getpass)
+
+    kr = cryptfile.CryptFileKeyring()
+    kr.file_path = tmp_path.joinpath(f"cp_new.cfg")
+
+    kr.set_password("test write", "user", "test password")
+    assert kr.get_password("test write", "user") == "test password"

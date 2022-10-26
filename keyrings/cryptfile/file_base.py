@@ -139,11 +139,13 @@ class Keyring(FileBacked, KeyringBackend):
     def _generate_assoc(self, service, username):
         """Generate tamper resistant bytestring of associated data"""
         if self.file_version is None:
-            joiner = r'\0'
+            joiner = '\0'
         else:
             version_tuple = tuple(int(segment) for segment in self.file_version.split("."))
     
-            if version_tuple >= (1, 3, 6):
+            if version_tuple > (1, 3, 8):
+                joiner = '\0'
+            elif version_tuple > (1, 3, 4):
                 joiner = r'\0'
             else:
                 joiner = '\0'
