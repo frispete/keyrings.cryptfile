@@ -92,7 +92,8 @@ class Keyring(FileBacked, KeyringBackend):
         if os.path.exists(self.file_path):
             config.read(self.file_path)
 
-        self._check_version(config)
+        if hasattr(self, "_check_version"):
+            self._check_version(config)
         assoc = self._generate_assoc(service, username)
         service = escape_for_ini(service)
         username = escape_for_ini(username)
