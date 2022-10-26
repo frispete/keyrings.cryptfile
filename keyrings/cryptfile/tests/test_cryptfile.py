@@ -1,4 +1,5 @@
 import getpass
+import pathlib
 from unittest import mock
 
 import pytest
@@ -89,3 +90,19 @@ class TestCCMCryptFileKeyring(TestCryptFileKeyring):
                     reason = "Need argon2_cffi and PyCryptodome package")
 class TesstOCBCryptFileKeyring(TestCryptFileKeyring):
     """ test OCB mode """
+
+
+@pytest.mark.parametrize(argnames="version", argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8)])
+def test_versions(version, monkeypatch):
+    version_string = ".".join(str(segment) for segment in version)
+    filename = f"cp{version_string}.cfg"
+    password = "passwd"
+    secret = "secret"
+
+    fake_getpass = mock.Mock(return_value=password)
+    monkeypatch.setattr(getpass, 'getpass', fake_getpass)
+
+    kr = cryptfile.CryptFileKeyring()
+    kr.file_path = pathlib.Path(__file__).parent.joinpath(filename)
+
+    assert kr.get_password("service", "user") == secret

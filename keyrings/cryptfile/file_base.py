@@ -87,14 +87,15 @@ class Keyring(FileBacked, KeyringBackend):
         """
         Read the password from the file.
         """
-        assoc = self._generate_assoc(service, username)
-        service = escape_for_ini(service)
-        username = escape_for_ini(username)
-
         # load the passwords from the file
         config = configparser.RawConfigParser()
         if os.path.exists(self.file_path):
             config.read(self.file_path)
+
+        self._check_version(config)
+        assoc = self._generate_assoc(service, username)
+        service = escape_for_ini(service)
+        username = escape_for_ini(username)
 
         # fetch the password
         try:
@@ -128,7 +129,17 @@ class Keyring(FileBacked, KeyringBackend):
 
     def _generate_assoc(self, service, username):
         """Generate tamper resistant bytestring of associated data"""
-        return (escape_for_ini(service) + r'\0' + escape_for_ini(username)).encode()
+        if self.file_version is None:
+            joiner = r'\0'
+        else:
+            version_tuple = tuple(int(segment) for segment in self.file_version.split("."))
+    
+            if version_tuple >= (1, 3, 6):
+                joiner = r'\0'
+            else:
+                joiner = '\0'
+
+        return (escape_for_ini(service) + joiner + escape_for_ini(username)).encode()
 
     def _write_config_value(self, service, key, value):
         # ensure the file exists
