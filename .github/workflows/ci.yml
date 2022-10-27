@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    # Daily at 05:47
+    - cron: '47 5 * * *'
+
+env:
+  PIP_NO_PYTHON_VERSION_WARNING: 1
+
+jobs:
+  test:
+    name: ${{ matrix.os.name }} ${{ matrix.python.name }} ${{ matrix.reactor.name }}
+    runs-on: ${{ matrix.os.runs-on }}
+    container: ${{ matrix.os.container[matrix.python.docker] }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - name: 🐧
+            runs-on: ubuntu-latest
+            python_platform: linux
+          - name: 🪟
+            runs-on: windows-latest
+            python_platform: win32
+          - name: 🍎
+            runs-on: macos-latest
+            python_platform: darwin
+        python:
+          - name: CPython 3.5
+            tox: py35
+            action: 3.5
+            implementation: cpython
+          - name: CPython 3.6
+            tox: py36
+            action: 3.6
+            implementation: cpython
+          - name: CPython 3.7
+            tox: py37
+            action: 3.7
+            implementation: cpython
+          - name: CPython 3.8
+            tox: py38
+            action: 3.8
+            implementation: cpython
+          - name: CPython 3.9
+            tox: py39
+            action: 3.9
+            implementation: cpython
+          - name: CPython 3.10
+            tox: py310
+            action: "3.10"
+            implementation: cpython
+          - name: CPython 3.11
+            tox: py311
+            action: "3.11"
+            implementation: cpython
+          - name: PyPy 3.7
+            tox: pypy37
+            action: pypy-3.7
+            implementation: pypy
+          - name: PyPy 3.8
+            tox: pypy38
+            action: pypy-3.8
+            implementation: pypy
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up ${{ matrix.python.name }}
+        uses: actions/setup-python@v4
+        with:
+          # This allows the matrix to specify just the major.minor version while still
+          # expanding it to get the latest patch version including alpha releases.
+          # This avoids the need to update for each new alpha, beta, release candidate,
+          # and then finally an actual release version.  actions/setup-python doesn't
+          # support this for PyPy presently so we get no help there.
+          #
+          # CPython -> 3.9.0-alpha - 3.9.X
+          # PyPy    -> pypy-3.7
+          python-version: ${{ fromJSON(format('["{0}", "{1}"]', format('{0}.0-alpha - {0}.X', matrix.python.action), matrix.python.action))[startsWith(matrix.python.action, 'pypy')] }}
+          architecture: x64
+      - name: Install
+        run: |
+          pip install --editable . --requirement keyrings/cryptfile/tests/requirements.txt
+      - name: Test
+        run: |
+          pytest --pyargs keyrings.cryptfile.tests
