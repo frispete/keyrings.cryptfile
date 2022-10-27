@@ -108,7 +108,7 @@ class TesstOCBCryptFileKeyring(TestCryptFileKeyring):
 )
 def test_versions(version, activities, monkeypatch, tmp_path):
     version_string = ".".join(str(segment) for segment in version)
-    filename = f"cp{version_string}.cfg"
+    filename = "cp{version_string}.cfg".format(version_string=version_string)
     shutil.copyfile(pathlib.Path(__file__).parent.joinpath(filename), tmp_path.joinpath(filename))
 
     fake_getpass = mock.Mock(return_value="passwd")
@@ -132,7 +132,7 @@ def test_new_file(monkeypatch, tmp_path):
     monkeypatch.setattr(getpass, 'getpass', fake_getpass)
 
     kr = cryptfile.CryptFileKeyring()
-    kr.file_path = tmp_path.joinpath(f"cp_new.cfg")
+    kr.file_path = tmp_path.joinpath("cp_new.cfg")
 
     kr.set_password("test write", "user", "test password")
     assert kr.get_password("test write", "user") == "test password"
