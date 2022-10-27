@@ -135,8 +135,8 @@ class FileKeyringTests(BackendBasicTests):
     def test_version(self):
         # version exists
         assert self.keyring.version is not None
-        if not hasattr(self.keyring, '_check_version'):
-            return
+        if isinstance(self.keyring, file.PlaintextKeyring):
+            pytest.skip("PlaintextKeyring does not have a version")
 
         # generate keyring
         self.set_password('system', 'user', 'password')
