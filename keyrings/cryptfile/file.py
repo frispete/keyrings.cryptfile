@@ -21,6 +21,7 @@ class PlaintextKeyring(Keyring):
     filename = 'keyring_pass.cfg'
     scheme = 'no encyption'
     version = '1.0'
+    file_version = None
 
     def encrypt(self, password, assoc=None):
         """Directly return the password itself, ignore associated data."""
@@ -30,6 +31,8 @@ class PlaintextKeyring(Keyring):
         """Directly return encrypted password, ignore associated data."""
         return password_encrypted
 
+    def _check_version(self, config):
+        return False
 
 class Encrypted(object):
     """
