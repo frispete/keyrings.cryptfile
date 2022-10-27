@@ -1,6 +1,8 @@
 import getpass
+import os
 import pathlib
 import shutil
+import sys
 from unittest import mock
 
 import pytest
@@ -10,6 +12,10 @@ from .test_file import FileKeyringTests
 from keyrings.cryptfile import cryptfile
 from keyrings.cryptfile.escape import escape as escape_for_ini
 
+if sys.version_info < (3, 6):
+    fspath = str
+else:
+    fspath = os.fspath
 
 def is_crypto_supported():
     try:
@@ -115,7 +121,7 @@ def test_versions(version, activities, monkeypatch, tmp_path):
     monkeypatch.setattr(getpass, 'getpass', fake_getpass)
 
     kr = cryptfile.CryptFileKeyring()
-    kr.file_path = tmp_path.joinpath(filename)
+    kr.file_path = fspath(tmp_path.joinpath(filename))
 
     for activity in activities:
         if activity == 'get':
@@ -132,7 +138,7 @@ def test_new_file(monkeypatch, tmp_path):
     monkeypatch.setattr(getpass, 'getpass', fake_getpass)
 
     kr = cryptfile.CryptFileKeyring()
-    kr.file_path = tmp_path.joinpath('cp_new.cfg')
+    kr.file_path = fspath(tmp_path.joinpath('cp_new.cfg'))
 
     kr.set_password('test write', 'user', 'test password')
     assert kr.get_password('test write', 'user') == 'test password'
