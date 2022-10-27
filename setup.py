@@ -28,6 +28,7 @@ setup_params = dict(
     python_requires = '>=3.5',
     install_requires = [
         'argon2_cffi',
+        'jaraco.classes',
         'keyring>=20.0.0',
         'pycryptodome',
     ],
