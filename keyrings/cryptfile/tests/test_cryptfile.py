@@ -94,45 +94,45 @@ class TesstOCBCryptFileKeyring(TestCryptFileKeyring):
 
 
 @pytest.mark.parametrize(
-    argnames="version",
+    argnames='version',
     argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8), (1, 3, 9)],
-    ids=lambda version: "no version" if version is None else ".".join(str(segment) for segment in version),
+    ids=lambda version: 'no version' if version is None else '.'.join(str(segment) for segment in version),
 )
 @pytest.mark.parametrize(
-    argnames="activities",
+    argnames='activities',
     argvalues=[
-        ["set", "get"],
-        ["get", "set"],
+        ['set', 'get'],
+        ['get', 'set'],
     ],
-    ids=lambda activities: "_".join(activities),
+    ids=lambda activities: '_'.join(activities),
 )
 def test_versions(version, activities, monkeypatch, tmp_path):
-    version_string = ".".join(str(segment) for segment in version)
-    filename = "cp{version_string}.cfg".format(version_string=version_string)
+    version_string = '.'.join(str(segment) for segment in version)
+    filename = 'cp{version_string}.cfg'.format(version_string=version_string)
     shutil.copyfile(pathlib.Path(__file__).parent.joinpath(filename), tmp_path.joinpath(filename))
 
-    fake_getpass = mock.Mock(return_value="passwd")
+    fake_getpass = mock.Mock(return_value='passwd')
     monkeypatch.setattr(getpass, 'getpass', fake_getpass)
 
     kr = cryptfile.CryptFileKeyring()
     kr.file_path = tmp_path.joinpath(filename)
 
     for activity in activities:
-        if activity == "get":
-            assert kr.get_password("service", "user") == "secret"
-        elif activity == "set":
-            kr.set_password("test write", "user", "test password")
-            assert kr.get_password("test write", "user") == "test password"
+        if activity == 'get':
+            assert kr.get_password('service', 'user') == 'secret'
+        elif activity == 'set':
+            kr.set_password('test write', 'user', 'test password')
+            assert kr.get_password('test write', 'user') == 'test password'
         else:
-            raise Exception("unexpected activity selection")
+            raise Exception('unexpected activity selection')
 
 
 def test_new_file(monkeypatch, tmp_path):
-    fake_getpass = mock.Mock(return_value="passwd")
+    fake_getpass = mock.Mock(return_value='passwd')
     monkeypatch.setattr(getpass, 'getpass', fake_getpass)
 
     kr = cryptfile.CryptFileKeyring()
-    kr.file_path = tmp_path.joinpath("cp_new.cfg")
+    kr.file_path = tmp_path.joinpath('cp_new.cfg')
 
-    kr.set_password("test write", "user", "test password")
-    assert kr.get_password("test write", "user") == "test password"
+    kr.set_password('test write', 'user', 'test password')
+    assert kr.get_password('test write', 'user') == 'test password'

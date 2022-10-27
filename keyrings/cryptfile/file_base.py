@@ -92,7 +92,7 @@ class Keyring(FileBacked, KeyringBackend):
         if os.path.exists(self.file_path):
             config.read(self.file_path)
 
-        if hasattr(self, "_check_version"):
+        if hasattr(self, '_check_version'):
             self._check_version(config)
         assoc = self._generate_assoc(service, username)
         service = escape_for_ini(service)
@@ -125,7 +125,7 @@ class Keyring(FileBacked, KeyringBackend):
         if os.path.exists(self.file_path):
             config.read(self.file_path)
 
-        if hasattr(self, "_check_version"):
+        if hasattr(self, '_check_version'):
             self._check_version(config)
 
         assoc = self._generate_assoc(service, username)
@@ -141,7 +141,7 @@ class Keyring(FileBacked, KeyringBackend):
         if self.file_version is None:
             joiner = '\0'
         else:
-            version_tuple = tuple(int(segment) for segment in self.file_version.split("."))
+            version_tuple = tuple(int(segment) for segment in self.file_version.split('.'))
     
             if version_tuple > (1, 3, 8):
                 joiner = '\0'
