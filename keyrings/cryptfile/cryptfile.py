@@ -4,7 +4,7 @@ import os
 import json
 
 import configparser
-from keyring.util import properties
+from jaraco.classes import properties
 
 from keyrings.cryptfile import __version__ as version
 from keyrings.cryptfile.file import EncryptedKeyring
@@ -85,7 +85,7 @@ class CryptFileKeyring(ArgonAESEncryption, EncryptedKeyring):
     filename = 'cryptfile_pass.cfg'
     pw_prefix = 'pw:'.encode()
 
-    @properties.ClassProperty
+    @properties.classproperty
     @classmethod
     def priority(self):
         """

@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - master
     tags:
       - v*
   pull_request:
@@ -12,6 +12,11 @@ on:
   schedule:
     # Daily at 05:47
     - cron: '47 5 * * *'
+
+concurrency:
+  # SHA is added to the end if on `master` to let all main workflows run
+  group: ${{ github.ref }}-${{ github.workflow }}-${{ github.event_name }}-${{ (github.ref == 'refs/heads/master') && github.sha || '' }}
+  cancel-in-progress: true
 
 env:
   PIP_NO_PYTHON_VERSION_WARNING: 1

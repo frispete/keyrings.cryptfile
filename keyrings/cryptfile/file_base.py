@@ -5,9 +5,10 @@ import abc
 import configparser
 from base64 import encodebytes, decodebytes
 
+from jaraco.classes import properties
 from keyring.errors import PasswordDeleteError
 from keyring.backend import KeyringBackend
-from keyring.util import platform_, properties
+from keyring.util import platform_
 from .escape import escape as escape_for_ini
 
 
