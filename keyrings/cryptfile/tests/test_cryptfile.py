@@ -101,7 +101,7 @@ class TesstOCBCryptFileKeyring(TestCryptFileKeyring):
 
 @pytest.mark.parametrize(
     argnames='version',
-    argvalues=[(1, 3, 4), (1, 3, 6), (1, 3, 8), (1, 3, 9)],
+    argvalues=[(major, minor, patch) for major in [1] for minor in [3] for patch in [4, 5, 6, 7, 8, 9]],
     ids=lambda version: 'no version' if version is None else '.'.join(str(segment) for segment in version),
 )
 @pytest.mark.parametrize(

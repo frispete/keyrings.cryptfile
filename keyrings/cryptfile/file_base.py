@@ -142,9 +142,9 @@ class Keyring(FileBacked, KeyringBackend):
         else:
             version_tuple = tuple(int(segment) for segment in self.file_version.split('.'))
     
-            if version_tuple > (1, 3, 8):
+            if version_tuple >= (1, 3, 9):
                 joiner = '\0'
-            elif version_tuple > (1, 3, 4):
+            elif version_tuple >= (1, 3, 6):
                 joiner = r'\0'
             else:
                 joiner = '\0'
