@@ -1,3 +1,7 @@
+1.3.9
+=====
+- Switch back to a single character assoc joiner and add backwards compatibility support for the intervening versions 1.3.6 through 1.3.8.  https://github.com/frispete/keyrings.cryptfile/issues/15
+
 1.3.8
 =====
 - Apply rename of _escape.py in convert.py as well. Thanks, Justin.
