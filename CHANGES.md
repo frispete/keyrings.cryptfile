@@ -1,6 +1,16 @@
 1.3.9
 =====
-- Switch back to a single character assoc joiner and add backwards compatibility support for the intervening versions 1.3.6 through 1.3.8.  https://github.com/frispete/keyrings.cryptfile/issues/15
+Kudos to Kyle Altendorf for this release!
+
+Thank you for finally finding and fixing a nasty issue, that I introduced
+by careless syncing with keyrings.alt. See:
+https://github.com/frispete/keyrings.cryptfile/commit/ae871c09aec4bb84cab7e756bf25b89c6eb04394#r90506129
+
+- Switch back to a single character assoc joiner '\0' and add backwards
+  compatibility support for the intervening versions 1.3.6 through 1.3.8.
+  Fixes: https://github.com/frispete/keyrings.cryptfile/issues/15
+- Add tests for this change and setup a github CI pipeline.
+- Switch to jaraco.classes.properties.
 
 1.3.8
 =====
