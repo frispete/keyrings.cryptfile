@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
     tags:
       - v*
   pull_request:
@@ -14,8 +14,8 @@ on:
     - cron: '47 5 * * *'
 
 concurrency:
-  # SHA is added to the end if on `master` to let all main workflows run
-  group: ${{ github.ref }}-${{ github.workflow }}-${{ github.event_name }}-${{ (github.ref == 'refs/heads/master') && github.sha || '' }}
+  # SHA is added to the end if on `main` to let all main workflows run
+  group: ${{ github.ref }}-${{ github.workflow }}-${{ github.event_name }}-${{ (github.ref == 'refs/heads/main') && github.sha || '' }}
   cancel-in-progress: true
 
 env:
@@ -40,14 +40,6 @@ jobs:
             runs-on: macos-latest
             python_platform: darwin
         python:
-          - name: CPython 3.5
-            tox: py35
-            action: 3.5
-            implementation: cpython
-          - name: CPython 3.6
-            tox: py36
-            action: 3.6
-            implementation: cpython
           - name: CPython 3.7
             tox: py37
             action: 3.7

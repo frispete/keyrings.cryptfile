@@ -1,2 +1,4 @@
-include *.md *.txt
+include *.md *.txt *.cfg
+include keyrings/cryptfile/tests/*.cfg
+include keyrings/cryptfile/tests/*.txt
 exclude .gitignore

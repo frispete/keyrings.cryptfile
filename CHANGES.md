@@ -1,3 +1,7 @@
+1.4.0
+=====
+- Rename master branch to main
+
 1.3.9
 =====
 Kudos to Kyle Altendorf for this release!
