@@ -69,7 +69,7 @@ jobs:
             action: pypy-3.8
             implementation: pypy
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up ${{ matrix.python.name }}
         uses: actions/setup-python@v4
         with:
