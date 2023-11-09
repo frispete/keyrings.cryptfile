@@ -11,6 +11,7 @@ from .escape import escape as escape_for_ini
 
 from keyrings.cryptfile.file_base import Keyring, decodebytes, encodebytes
 
+KEYRING_CRYPTFILE_PASSWORD = "KEYRING_CRYPTFILE_PASSWORD"
 
 class PlaintextKeyring(Keyring):
     """Simple File Keyring with no encryption"""
@@ -195,9 +196,12 @@ class EncryptedKeyring(Encrypted, Keyring):
         user.
         """
         if self._keyring_key is None:
-            self._keyring_key = getpass.getpass(
-            'Please enter password for encrypted keyring: '
-        )
+            if KEYRING_CRYPTFILE_PASSWORD in os.environ:
+                self._keyring_key = os.environ[KEYRING_CRYPTFILE_PASSWORD]
+            else:
+                self._keyring_key = getpass.getpass(
+                    'Please enter password for encrypted keyring: '
+                )
         try:
             ref_pw = self.get_password('keyring-setting', 'password reference')
             assert ref_pw == 'password reference value'
