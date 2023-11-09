@@ -157,14 +157,26 @@ Notes
 
 You can avoid the interactive getpass() request for the keyring password by
 supplying `kr.keyring_key = "your keyring password"` before calling any other
-methods on the keyring. The following example shows a simple way to retrieve the 
-password from an environment variable `KEYRING_CRYPTFILE_PASSWORD`, when present:
+methods on the keyring.
+
 ```python
 from getpass import getpass
 from os import getenv
 from keyrings.cryptfile.cryptfile import CryptFileKeyring
 kr = CryptFileKeyring()
-kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD") or getpass()
+kr.keyring_key = getpass()
+keyring.set_keyring(kr)
+```
+
+or the keyring password can be provided via an environment variable
+
+```python
+os.environ['KEYRING_CRYPTFILE_PASSWORD']='password'
+
+from getpass import getpass
+from os import getenv
+from keyrings.cryptfile.cryptfile import CryptFileKeyring
+kr = CryptFileKeyring()
 keyring.set_keyring(kr)
 ```
 
