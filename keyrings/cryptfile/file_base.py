@@ -11,6 +11,7 @@ from keyring.backend import KeyringBackend
 from keyring.util import platform_
 from .escape import escape as escape_for_ini
 
+KEYRING_CRYPTFILE_PATH  = 'KEYRING_CRYPTFILE_PATH'
 
 class FileBacked(object):
     @abc.abstractproperty
@@ -25,7 +26,8 @@ class FileBacked(object):
         The path to the file where passwords are stored. This property
         may be overridden by the subclass or at the instance level.
         """
-        return os.path.join(platform_.data_root(), self.filename)
+        default = os.path.join(platform_.data_root(), self.filename)
+        return os.environ.get(KEYRING_CRYPTFILE_PATH, default)
 
     @abc.abstractproperty
     def scheme(self):
@@ -141,7 +143,7 @@ class Keyring(FileBacked, KeyringBackend):
             joiner = '\0'
         else:
             version_tuple = tuple(int(segment) for segment in self.file_version.split('.'))
-    
+
             if version_tuple >= (1, 3, 9):
                 joiner = '\0'
             elif version_tuple >= (1, 3, 6):

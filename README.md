@@ -180,6 +180,11 @@ kr = CryptFileKeyring()
 keyring.set_keyring(kr)
 ```
 
+Environment variables
+---------------------
+`KEYRING_CRYPTFILE_PATH` can be used to customize the location of the encrypted file config
+
+
 Testing
 -------
 
