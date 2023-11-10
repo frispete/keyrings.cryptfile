@@ -1,3 +1,7 @@
+1.4.1 (unreleased)
+==================
+- Support for pulling the database from from the environment variable `KEYRING_CRYPTFILE_PASSWORD`
+
 1.4.0
 =====
 - Rename master branch to main
