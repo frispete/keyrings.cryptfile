@@ -1,6 +1,7 @@
 1.4.1 (unreleased)
 ==================
 - Support for pulling the database from from the environment variable `KEYRING_CRYPTFILE_PASSWORD`
+- Support for customizing the location of the encrypted file config with the environment variable `KEYRING_CRYPTFILE_PATH`
 
 1.4.0
 =====
