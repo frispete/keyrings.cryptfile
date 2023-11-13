@@ -183,7 +183,7 @@ keyring.set_keyring(kr)
 Environment variables
 ---------------------
 `KEYRING_CRYPTFILE_PATH` can be used to customize the location of the encrypted file config
-
+`KEYRING_CRYPTFILE_PASSWORD` can be used to provide the password for the encrypted keyring database
 
 Testing
 -------
