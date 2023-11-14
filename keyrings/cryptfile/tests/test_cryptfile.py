@@ -3,6 +3,7 @@ import os
 import pathlib
 import shutil
 import sys
+import tempfile
 from unittest import mock
 
 import pytest
@@ -163,3 +164,15 @@ def test_new_file(monkeypatch, tmp_path):
 
     kr.set_password('test write', 'user', 'test password')
     assert kr.get_password('test write', 'user') == 'test password'
+
+
+def test_new_file_via_env(monkeypatch, tmp_path):
+    fake_getpass = mock.Mock(return_value='passwd')
+    monkeypatch.setattr(getpass, 'getpass', fake_getpass)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.environ['KEYRING_CRYPTFILE_PATH'] = os.path.join(tmpdir, "cf_new.cfg")
+        kr = cryptfile.CryptFileKeyring()
+        kr.set_password('test write', 'user', 'test password')
+        assert kr.get_password('test write', 'user') == 'test password'
+        assert os.path.exists(os.environ['KEYRING_CRYPTFILE_PATH'])
